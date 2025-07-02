@@ -2,7 +2,8 @@
 using LibraryManagementSystem.Data;
 using LibraryManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; // <-- Add this
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;// <-- Add this
 
 namespace LibraryManagementSystem.Controllers
 {
@@ -16,7 +17,9 @@ namespace LibraryManagementSystem.Controllers
         }
         public IActionResult IndexBook()
         {
-            var books = _context.Books.ToList();
+            var books = _context.Books
+                .Include(b => b.Category) // This will join Category table data
+                .ToList();
             return View(books);
         }
         public IActionResult CreateBook()
@@ -61,24 +64,24 @@ namespace LibraryManagementSystem.Controllers
         }
         public IActionResult DeleteBook(int id)
         {
-            var book = _context.Books.Find(id);
-            if (book == null)
-            {
-                return NotFound();
-            }
+            var book = _context.Books
+     .Include(b => b.Category)
+     .FirstOrDefault(b => b.BookId == id);
+
             return View(book);
         }
         [HttpPost, ActionName("DeleteBook")]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int BookId)
         {
-            var book = _context.Books.Find(id);
+            var book = _context.Books.Find(BookId);
             if (book != null)
             {
                 _context.Books.Remove(book);
                 _context.SaveChanges();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("IndexBook", "BookManagement");
             }
             return NotFound();
         }
+
     }
 }

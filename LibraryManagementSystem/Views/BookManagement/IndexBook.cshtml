@@ -39,7 +39,7 @@
                 <td>@book.ISBN</td>
                 <td>@book.Publisher</td>
                 <td>@book.PublishedDate.ToShortDateString()</td>
-                <td>@book.Category?.CategoryName ?? "N/A"</td>
+                <td>@book.Category?.CategoryName</td>
                 <td>
                     @if (!string.IsNullOrEmpty(book.CoverImage))
                     {
