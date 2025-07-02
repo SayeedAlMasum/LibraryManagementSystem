@@ -7,7 +7,7 @@
 <p>
     <a asp-controller="Category" asp-action="CreateCategory" class="btn btn-primary">Create New</a>
 </p>
-<table class="table table-bordered">
+<table id="myTable" class="table table-bordered">
     <thead>
         <tr>
             <th>Category ID</th>
@@ -30,3 +30,10 @@
             </tr>
         }
     </tbody>
+
+@section Scripts {
+        <partial name="_ValidationScriptsPartial" />
+        <script>
+            $('#myTable').DataTable();
+        </script>
+}

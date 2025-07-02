@@ -11,7 +11,7 @@
     <a asp-controller="BookManagement" asp-action="CreateBook" class="btn btn-primary">Create New</a>
 </p>
 
-<table class="table table-bordered">
+<table id="myTable" class="table table-bordered">
     <thead>
         <tr>
             <th>Book ID</th>
@@ -63,4 +63,8 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $('#myTable').DataTable();
+    </script>
 }
+
