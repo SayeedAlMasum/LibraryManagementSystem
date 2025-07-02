@@ -1,0 +1,66 @@
+﻿@* IndexBook.cshtml *@
+@model IEnumerable<LibraryManagementSystem.Models.Book>
+
+@{
+    ViewData["Title"] = "Book List";
+}
+
+<h2>Book List</h2>
+
+<p>
+    <a asp-controller="BookManagement" asp-action="CreateBook" class="btn btn-primary">Create New</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Book ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Publisher</th>
+            <th>Published Date</th>
+            <th>Category</th>
+            <th>Cover Image</th>
+            <th>Total Copies</th>
+            <th>Borrow Records</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>@book.BookId</td>
+                <td>@book.Title</td>
+                <td>@book.Description</td>
+                <td>@book.Author</td>
+                <td>@book.ISBN</td>
+                <td>@book.Publisher</td>
+                <td>@book.PublishedDate.ToShortDateString()</td>
+                <td>@book.Category?.CategoryName ?? "N/A"</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(book.CoverImage))
+                    {
+                        <img src="@book.CoverImage" alt="Cover Image" width="100" height="150" />
+                    }
+                    else
+                    {
+                        <span>No Image</span>
+                    }
+                </td>
+                <td>@book.TotalCopies</td>
+                <td>@book.BorrowRecords</td>
+                <td>
+                    <a asp-controller="BookManagement" asp-action="EditBook" asp-route-id="@book.BookId" class="btn btn-warning">Edit</a>
+                    <a asp-controller="BookManagement" asp-action="DeleteBook" asp-route-id="@book.BookId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

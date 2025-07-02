@@ -1,8 +1,8 @@
-﻿@* CreateBook.cshtml *@
+﻿@* EditBook.cshtml *@ 
 @model LibraryManagementSystem.Models.Book
 
 @{
-    ViewData["Title"] = "CreateBook";
+    ViewData["Title"] = "Edit Book";
 }
 
 <a asp-controller="BookManagement" asp-action="IndexBook" class="btn btn-primary">View Books</a>
@@ -13,7 +13,7 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-6">
-                    <h1>Create New Book</h1>
+                    <h1>Edit Book</h1>
                 </div>
             </div>
         </div>
@@ -28,14 +28,17 @@
                     <!-- general form elements -->
                     <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Create New Book</h3>
+                            <h3 class="card-title">Edit Book</h3>
                         </div>
 
                         <!-- form start -->
-                        <form asp-action="CreateBook" method="post">
+                        <form asp-action="EditBook" method="post">
                             <div class="card-body">
 
-                                <div asp-validation-summary="All" class="text-danger"></div>
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                                <!-- Hidden field for BookId -->
+                                <input type="hidden" asp-for="BookId" />
 
                                 <div class="form-group">
                                     <label asp-for="Title">Book Title</label>
@@ -95,7 +98,7 @@
 
                                 <div class="form-group">
                                     <label asp-for="BorrowRecords">Borrow Records</label>
-                                    <input asp-for="BorrowRecords" class="form-control" type="number" min="0" placeholder="Enter borrow records (usually 0 for new books)" />
+                                    <input asp-for="BorrowRecords" class="form-control" type="number" min="0" placeholder="Enter borrow records" />
                                     <span asp-validation-for="BorrowRecords" class="text-danger"></span>
                                 </div>
 
@@ -103,7 +106,7 @@
 
                             <!-- /.card-body -->
                             <div class="card-footer">
-                                <button type="submit" class="btn btn-primary">Create</button>
+                                <button type="submit" class="btn btn-primary">Update</button>
                             </div>
                         </form>
 
