@@ -13,10 +13,11 @@ namespace LibraryManagementSystem.Controllers
         {
             _context = context;
         }
-        public IActionResult Index()
+
+        public IActionResult IndexCategory()
         {
             var categories = _context.Categories.ToList();
-            return View(categories);
+            return View("IndexCategory",categories);//Custom View
         }
         public IActionResult CreateCategory()
         {
@@ -32,7 +33,7 @@ namespace LibraryManagementSystem.Controllers
                 _context.Categories.Add(category);
                 _context.SaveChanges();
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("IndexCategory", "Category");
             }
 
             return View(category);
@@ -44,7 +45,7 @@ namespace LibraryManagementSystem.Controllers
             {
                 return NotFound();
             }
-            return View(category);
+            return View("EditCategory",category);//Custom view
         }
 
         [HttpPost]
@@ -60,9 +61,9 @@ namespace LibraryManagementSystem.Controllers
             {
                 _context.Categories.Update(category);
                 _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("IndexCategory", "Category");
             }
-            return View(category);
+            return View("EditCategory",category);//Custom View
         }
 
         public IActionResult DeleteCategory(int id)
@@ -72,7 +73,7 @@ namespace LibraryManagementSystem.Controllers
             {
                 return NotFound();
             }
-            return View(category);
+            return View("DeleteCategory",category);//Custom View
         }
 
         [HttpPost, ActionName("DeleteCategory")]
@@ -85,7 +86,7 @@ namespace LibraryManagementSystem.Controllers
                 _context.Categories.Remove(category);
                 _context.SaveChanges();
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("IndexCategory", "Category");
         }
 
     }

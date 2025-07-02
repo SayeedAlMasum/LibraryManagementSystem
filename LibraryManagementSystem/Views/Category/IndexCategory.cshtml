@@ -1,0 +1,32 @@
+﻿@* IndexCategory.cshtml *@
+@model IEnumerable<LibraryManagementSystem.Models.Category>
+@{
+    ViewData["Title"] = "Category List";
+}
+<h2>Category List</h2>
+<p>
+    <a asp-controller="Category" asp-action="CreateCategory" class="btn btn-primary">Create New</a>
+</p>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Category ID</th>
+            <th>Category Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var category in Model)
+        {
+            <tr>
+                <td>@category.CategoryId</td>
+                <td>@category.CategoryName</td>
+                <td>@category.Description</td>
+                <td>
+                    <a asp-controller="Category" asp-action="EditCategory" asp-route-id="@category.CategoryId" class="btn btn-warning">Edit</a>
+                    <a asp-controller="Category" asp-action="DeleteCategory" asp-route-id="@category.CategoryId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
