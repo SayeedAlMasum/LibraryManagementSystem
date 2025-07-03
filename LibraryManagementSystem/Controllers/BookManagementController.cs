@@ -1,6 +1,8 @@
 ﻿//BookManagementController.cs
 using LibraryManagementSystem.Data;
 using LibraryManagementSystem.Models;
+using LibraryManagementSystem.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;// <-- Add this
@@ -15,11 +17,26 @@ namespace LibraryManagementSystem.Controllers
         {
             _context = context;
         }
+        [AllowAnonymous]
         public IActionResult IndexBook()
         {
             var books = _context.Books
-                .Include(b => b.Category) // This will join Category table data
-                .ToList();
+                .Include(b => b.Category)
+                .Select(b => new BookViewModel
+                {
+                    BookId = b.BookId,
+                    Title = b.Title,
+                    Description = b.Description,
+                    Author = b.Author,
+                    ISBN = b.ISBN,
+                    Publisher = b.Publisher,
+                    PublishedDate = b.PublishedDate,
+                    CategoryName = b.Category.CategoryName,
+                    CoverImage = b.CoverImage,
+                    TotalCopies = b.TotalCopies,
+                    BorrowRecords = b.BorrowRecords
+                }).ToList();
+
             return View(books);
         }
         public IActionResult CreateBook()
@@ -32,10 +49,13 @@ namespace LibraryManagementSystem.Controllers
         [HttpPost]
         public IActionResult CreateBook(Book book)
         {
-            
+            if (book.Title != null)
+            {
                 _context.Books.Add(book);
                 _context.SaveChanges();
                 return RedirectToAction("IndexBook", "BookManagement");
+            }
+            return View();
 
         }
         public IActionResult EditBook(int id)

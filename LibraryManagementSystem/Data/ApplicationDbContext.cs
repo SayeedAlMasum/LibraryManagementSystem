@@ -1,4 +1,5 @@
-﻿using LibraryManagementSystem.Models;
+﻿//ApplicationDbContext.cs
+using LibraryManagementSystem.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -14,6 +15,8 @@ namespace LibraryManagementSystem.Data
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Book> Books { get; set; }
+        public DbSet<BorrowRecord> BorrowRecords { get; set; }
+
 
     }
 }

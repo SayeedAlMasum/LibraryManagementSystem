@@ -1,6 +1,5 @@
 ﻿@* IndexBook.cshtml *@
-@model IEnumerable<LibraryManagementSystem.Models.Book>
-
+@model IEnumerable<LibraryManagementSystem.ViewModels.BookViewModel>
 @{
     ViewData["Title"] = "Book List";
 }
@@ -10,6 +9,7 @@
 <p>
     <a asp-controller="BookManagement" asp-action="CreateBook" class="btn btn-primary">Create New</a>
 </p>
+
 
 <table id="myTable" class="table table-bordered">
     <thead>
@@ -39,7 +39,7 @@
                 <td>@book.ISBN</td>
                 <td>@book.Publisher</td>
                 <td>@book.PublishedDate.ToShortDateString()</td>
-                <td>@book.Category?.CategoryName</td>
+                <td>@book.CategoryName</td>
                 <td>
                     @if (!string.IsNullOrEmpty(book.CoverImage))
                     {
@@ -55,6 +55,11 @@
                 <td>
                     <a asp-controller="BookManagement" asp-action="EditBook" asp-route-id="@book.BookId" class="btn btn-warning">Edit</a>
                     <a asp-controller="BookManagement" asp-action="DeleteBook" asp-route-id="@book.BookId" class="btn btn-danger">Delete</a>
+                    @if (User.IsInRole("User"))
+                    {
+                        <a asp-controller="Borrow" asp-action="BorrowBook" asp-route-id="@book.BookId" class="btn btn-success">Borrow</a>
+                    }
+
                 </td>
             </tr>
         }
