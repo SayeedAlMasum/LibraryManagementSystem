@@ -10,8 +10,9 @@ namespace LibraryManagementSystem.ViewModels
         public string ISBN { get; set; } = string.Empty;
         public string Publisher { get; set; }
         public DateTime PublishedDate { get; set; }
+        public int CategoryId { get; set; }
         public string CategoryName { get; set; }
-        public string CoverImage { get; set; }
+        public string CoverImage { get; set; } // ✅ Only the image path
         public int TotalCopies { get; set; }
         public int BorrowRecords { get; set; }
     }

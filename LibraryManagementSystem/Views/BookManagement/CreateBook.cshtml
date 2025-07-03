@@ -1,5 +1,5 @@
 ﻿@* CreateBook.cshtml *@
-@model LibraryManagementSystem.Models.Book
+@model LibraryManagementSystem.ViewModels.BookCreateViewModel
 
 @{
     ViewData["Title"] = "CreateBook";
@@ -32,7 +32,7 @@
                         </div>
 
                         <!-- form start -->
-                        <form asp-action="CreateBook" method="post">
+                        <form asp-action="CreateBook" method="post" enctype="multipart/form-data">
                             <div class="card-body">
 
                                 <div asp-validation-summary="All" class="text-danger"></div>
@@ -82,10 +82,11 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label asp-for="CoverImage">Cover Image URL</label>
-                                    <input asp-for="CoverImage" class="form-control" type="url" placeholder="Enter image URL" />
+                                    <label asp-for="CoverImage">Book Cover Image</label>
+                                    <input asp-for="CoverImage" class="form-control" type="file" />
                                     <span asp-validation-for="CoverImage" class="text-danger"></span>
                                 </div>
+
 
                                 <div class="form-group">
                                     <label asp-for="TotalCopies">Total Copies</label>

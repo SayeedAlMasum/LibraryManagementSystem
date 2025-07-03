@@ -41,23 +41,51 @@ namespace LibraryManagementSystem.Controllers
         }
         public IActionResult CreateBook()
         {
-            // Fetch categories and assign to ViewBag
             ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName");
             return View();
         }
-
         [HttpPost]
-        public IActionResult CreateBook(Book book)
+        public async Task<IActionResult> CreateBook(BookCreateViewModel model)
         {
-            if (book.Title != null)
+            if (ModelState.IsValid)
             {
+                string fileName = null;
+
+                if (model.CoverImage != null && model.CoverImage.Length > 0)
+                {
+                    fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.CoverImage.FileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await model.CoverImage.CopyToAsync(stream);
+                    }
+                }
+
+                var book = new Book
+                {
+                    Title = model.Title,
+                    Author = model.Author,
+                    ISBN = model.ISBN,
+                    Publisher = model.Publisher,
+                    PublishedDate = model.PublishedDate,
+                    CategoryId = model.CategoryId,
+                    Description = model.Description,
+                    CoverImage = fileName != null ? "/images/" + fileName : null,
+                    TotalCopies = model.TotalCopies,
+                    BorrowRecords = model.BorrowRecords
+                };
+
                 _context.Books.Add(book);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
                 return RedirectToAction("IndexBook", "BookManagement");
             }
-            return View();
 
+            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName");
+            return View(model);
         }
+
+
         public IActionResult EditBook(int id)
         {
             var book = _context.Books.Find(id);
