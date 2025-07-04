@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagementSystem.Controllers
 {
-    [Authorize] // Only logged-in users can borrow books
+    [Authorize(Roles = "User")]
     public class BorrowController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,76 +20,67 @@ namespace LibraryManagementSystem.Controllers
             _userManager = userManager;
         }
 
-        // Borrow a book
+        // GET: Confirm Borrow Page
         public async Task<IActionResult> BorrowBook(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _context.Books.FirstOrDefaultAsync(b => b.BookId == id);
             if (book == null || book.TotalCopies <= 0)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Book is not available!";
+                return RedirectToAction("IndexBook", "BookManagement");
             }
 
-            var userId = _userManager.GetUserId(User);
+            return View(book);
+        }
+
+        // POST: Borrow the Book
+        [HttpPost]
+        public async Task<IActionResult> ConfirmBorrow(int bookId)
+        {
+            var book = await _context.Books.FirstOrDefaultAsync(b => b.BookId == bookId);
+            if (book == null || book.TotalCopies <= 0)
+            {
+                return Json(new { success = false, message = "Book not available" });
+            }
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+            {
+                return Json(new { success = false, message = "User not found. Please log in again." });
+            }
 
             var borrowRecord = new BorrowRecord
             {
-                BookId = id,
-                UserId = userId,
+                BookId = bookId,
+                UserId = user.Id,
                 BorrowDate = DateTime.Now,
-                DueDate = DateTime.Now.AddDays(7), // 7 days borrow duration
-                FineAmount = 0
+                DueDate = DateTime.Now.AddDays(7)
             };
 
-            _context.BorrowRecords.Add(borrowRecord);
-
             book.TotalCopies -= 1;
+            book.BorrowRecords += 1;
+
+            _context.BorrowRecords.Add(borrowRecord);
             _context.Books.Update(book);
 
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "Book borrowed successfully!";
-            return RedirectToAction("IndexBook", "BookManagement");
+            return Json(new { success = true, message = "Book borrowed successfully" });
         }
 
-        // Return a book
-        public async Task<IActionResult> ReturnBook(int id)
+        // GET: List of Borrowed Books
+        public async Task<IActionResult> BorrowBookList()
         {
-            var record = await _context.BorrowRecords.Include(b => b.Book).FirstOrDefaultAsync(b => b.BorrowId == id);
-            if (record == null || record.ReturnDate != null)
-            {
-                return NotFound();
-            }
+            var user = await _userManager.GetUserAsync(User);
 
-            record.ReturnDate = DateTime.Now;
-
-            // Fine calculation if overdue
-            if (record.ReturnDate > record.DueDate)
-            {
-                var daysOverdue = (record.ReturnDate.Value - record.DueDate).Days;
-                record.FineAmount = daysOverdue * 10; // Example: 10 units fine per day
-            }
-
-            record.Book.TotalCopies += 1;
-
-            _context.BorrowRecords.Update(record);
-            _context.Books.Update(record.Book);
-
-            await _context.SaveChangesAsync();
-
-            TempData["SuccessMessage"] = "Book returned successfully!";
-            return RedirectToAction("MyBorrowedBooks");
-        }
-
-        // View Borrowed Books for current user
-        public async Task<IActionResult> MyBorrowedBooks()
-        {
-            var userId = _userManager.GetUserId(User);
-            var records = await _context.BorrowRecords
-                .Include(b => b.Book)
-                .Where(b => b.UserId == userId)
+            var borrowRecords = await _context.BorrowRecords
+                .Include(br => br.Book)
+                .Where(br => br.UserId == user.Id)
                 .ToListAsync();
 
-            return View(records);
+            return View(borrowRecords);
         }
+
     }
 }

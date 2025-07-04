@@ -10,7 +10,6 @@
     <a asp-controller="BookManagement" asp-action="CreateBook" class="btn btn-primary">Create New</a>
 </p>
 
-
 <table id="myTable" class="table table-bordered">
     <thead>
         <tr>
@@ -49,18 +48,16 @@
                     {
                         <span>No Image</span>
                     }
-
                 </td>
                 <td>@book.TotalCopies</td>
                 <td>@book.BorrowRecords</td>
                 <td>
                     <a asp-controller="BookManagement" asp-action="EditBook" asp-route-id="@book.BookId" class="btn btn-warning">Edit</a>
-                    <a asp-controller="BookManagement" asp-action="DeleteBook" asp-route-id="@book.BookId" class="btn btn-danger">Delete</a>
+                    <button class="btn btn-danger btn-delete" data-id="@book.BookId">Delete</button>
                     @if (User.IsInRole("User"))
                     {
-                        <a asp-controller="Borrow" asp-action="BorrowBook" asp-route-id="@book.BookId" class="btn btn-success">Borrow</a>
+                        <button class="btn btn-success btn-borrow" data-id="@book.BookId">Borrow</button>
                     }
-
                 </td>
             </tr>
         }
@@ -68,9 +65,98 @@
 </table>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
     <script>
-        $('#myTable').DataTable();
+        $(document).ready(function () {
+            // Delete book with SweetAlert and AJAX
+            $('.btn-delete').click(function () {
+                var bookId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/BookManagement/DeleteBook',
+                            type: 'POST',
+                            data: { id: bookId },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire(
+                                        'Deleted!',
+                                        response.message,
+                                        'success'
+                                    ).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        response.message,
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function () {
+                                Swal.fire(
+                                    'Error!',
+                                    'Something went wrong.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Borrow book with SweetAlert and AJAX
+            $('.btn-borrow').click(function () {
+                var bookId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to borrow this book?",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, Borrow it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/Borrow/ConfirmBorrow',
+                            type: 'POST',
+                            data: { bookId: bookId },
+                            success: function (response) {
+                                Swal.fire(
+                                    'Success!',
+                                    'Book borrowed successfully.',
+                                    'success'
+                                ).then(() => {
+                                    location.reload(); // Refresh the page to update copies
+                                });
+                            },
+                            error: function () {
+                                Swal.fire(
+                                    'Error!',
+                                    'An error occurred while borrowing the book.',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Initialize DataTable
+            $('#myTable').DataTable();
+        });
     </script>
 }
-

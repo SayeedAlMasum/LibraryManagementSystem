@@ -5,7 +5,7 @@ using LibraryManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;// <-- Add this
+using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagementSystem.Controllers
 {
@@ -17,6 +17,7 @@ namespace LibraryManagementSystem.Controllers
         {
             _context = context;
         }
+
         [AllowAnonymous]
         public IActionResult IndexBook()
         {
@@ -39,11 +40,13 @@ namespace LibraryManagementSystem.Controllers
 
             return View(books);
         }
+
         public IActionResult CreateBook()
         {
             ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName");
             return View();
         }
+
         [HttpPost]
         public async Task<IActionResult> CreateBook(BookCreateViewModel model)
         {
@@ -85,7 +88,6 @@ namespace LibraryManagementSystem.Controllers
             return View(model);
         }
 
-
         public IActionResult EditBook(int id)
         {
             var book = _context.Books.Find(id);
@@ -93,10 +95,11 @@ namespace LibraryManagementSystem.Controllers
             {
                 return NotFound();
             }
-            // Fetch categories and assign to ViewBag
+
             ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName", book.CategoryId);
             return View(book);
         }
+
         [HttpPost]
         public IActionResult EditBook(Book book)
         {
@@ -104,32 +107,27 @@ namespace LibraryManagementSystem.Controllers
             {
                 _context.Books.Update(book);
                 _context.SaveChanges();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("IndexBook", "BookManagement");
             }
-            // Repopulate categories if model state is invalid
+
             ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName", book.CategoryId);
             return View(book);
         }
+
+        // AJAX-based delete method
+        [HttpPost]
         public IActionResult DeleteBook(int id)
         {
-            var book = _context.Books
-     .Include(b => b.Category)
-     .FirstOrDefault(b => b.BookId == id);
-
-            return View(book);
-        }
-        [HttpPost, ActionName("DeleteBook")]
-        public IActionResult DeleteConfirmed(int BookId)
-        {
-            var book = _context.Books.Find(BookId);
-            if (book != null)
+            var book = _context.Books.Find(id);
+            if (book == null)
             {
-                _context.Books.Remove(book);
-                _context.SaveChanges();
-                return RedirectToAction("IndexBook", "BookManagement");
+                return Json(new { success = false, message = "Book not found" });
             }
-            return NotFound();
-        }
 
+            _context.Books.Remove(book);
+            _context.SaveChanges();
+
+            return Json(new { success = true, message = "Book deleted successfully" });
+        }
     }
 }

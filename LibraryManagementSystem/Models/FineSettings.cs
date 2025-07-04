@@ -1,4 +1,5 @@
-﻿namespace LibraryManagementSystem.Models
+﻿//FineSettings.cs
+namespace LibraryManagementSystem.Models
 {
     public class FineSettings
     {

@@ -69,39 +69,32 @@ namespace LibraryManagementSystem.Controllers
             return View("EditCategory", category); // Custom View
         }
 
+        [HttpPost]
         public IActionResult DeleteCategory(int id)
         {
             var category = _context.Categories.Find(id);
             if (category == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Category not found" });
             }
-            return View("DeleteCategory", category); // Custom View
+
+            _context.Categories.Remove(category);
+            _context.SaveChanges();
+
+            // Optional: Reseed after delete
+            ReseedCategoryTable();
+
+            return Json(new { success = true, message = "Category deleted successfully" });
         }
 
-        [HttpPost, ActionName("DeleteCategory")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            var category = _context.Categories.Find(id);
-            if (category != null)
-            {
-                _context.Categories.Remove(category);
-                _context.SaveChanges();
-
-                // Call reseed method here
-                ReseedCategoryTable();
-            }
-            return RedirectToAction("IndexCategory", "Category");
-        }
-
-        // ======== Reseed Method =========
+        // ========= Reseed Method =========
         private void ReseedCategoryTable()
         {
             var maxId = _context.Categories.Any() ? _context.Categories.Max(c => c.CategoryId) : 0;
             string reseedSql = $"DBCC CHECKIDENT ('Categories', RESEED, {maxId})";
             _context.Database.ExecuteSqlRaw(reseedSql);
         }
+
     }
 }
 

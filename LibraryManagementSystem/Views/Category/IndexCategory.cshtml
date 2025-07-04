@@ -25,16 +25,64 @@
                 <td>@category.Description</td>
                 <td>
                     <a asp-controller="Category" asp-action="EditCategory" asp-route-id="@category.CategoryId" class="btn btn-warning">Edit</a>
-                    <a asp-controller="Category" asp-action="DeleteCategory" asp-route-id="@category.CategoryId" class="btn btn-danger">Delete</a>
+                    <button class="btn btn-danger btn-delete" data-id="@category.CategoryId">Delete</button>
 
                 </td>
             </tr>
         }
     </tbody>
-
 @section Scripts {
         <partial name="_ValidationScriptsPartial" />
         <script>
-            $('#myTable').DataTable();
+            $(document).ready(function () {
+                $('#myTable').DataTable();
+
+                $('.btn-delete').click(function () {
+                    var categoryId = $(this).data('id');
+
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to recover this category!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: '/Category/DeleteCategory',
+                                type: 'POST',
+                                data: { id: categoryId },
+                                success: function (response) {
+                                    if (response.success) {
+                                        Swal.fire(
+                                            'Deleted!',
+                                            response.message,
+                                            'success'
+                                        ).then(() => {
+                                            location.reload();
+                                        });
+                                    } else {
+                                        Swal.fire(
+                                            'Error!',
+                                            response.message,
+                                            'error'
+                                        );
+                                    }
+                                },
+                                error: function () {
+                                    Swal.fire(
+                                        'Error!',
+                                        'Something went wrong.',
+                                        'error'
+                                    );
+                                }
+                            });
+                        }
+                    });
+                });
+            });
         </script>
 }

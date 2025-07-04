@@ -1,4 +1,5 @@
-﻿namespace LibraryManagementSystem.Models
+﻿//BookRequest.cs
+namespace LibraryManagementSystem.Models
 {
     public class BookRequest
     {
