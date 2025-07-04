@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagementSystem.Controllers
 {
-    [Authorize(Roles = "User")]
     public class BorrowController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -21,6 +20,7 @@ namespace LibraryManagementSystem.Controllers
         }
 
         // GET: Confirm Borrow Page
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> BorrowBook(int id)
         {
             var book = await _context.Books.FirstOrDefaultAsync(b => b.BookId == id);
@@ -34,6 +34,7 @@ namespace LibraryManagementSystem.Controllers
         }
 
         // POST: Borrow the Book
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<IActionResult> ConfirmBorrow(int bookId)
         {
@@ -70,6 +71,7 @@ namespace LibraryManagementSystem.Controllers
         }
 
         // GET: List of Borrowed Books
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> BorrowBookList()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -83,19 +85,28 @@ namespace LibraryManagementSystem.Controllers
         }
 
         // Show Full Borrow History
-        // GET: Borrow History Page
+        [Authorize]
         public async Task<IActionResult> BorrowHistory()
         {
             var user = await _userManager.GetUserAsync(User);
 
-            var borrowRecords = await _context.BorrowRecords
-                .Include(br => br.Book)
-                .Where(br => br.UserId == user.Id)
-                .ToListAsync();
+            IQueryable<BorrowRecord> query = _context.BorrowRecords.Include(br => br.Book).Include(br => br.User);
 
-            return View(borrowRecords);
+            if (User.IsInRole("Admin"))
+            {
+                // Admin can see all records
+                var allRecords = await query.ToListAsync();
+                return View(allRecords);
+            }
+            else
+            {
+                // Users and Librarians can only see their own records
+                var userRecords = await query.Where(br => br.UserId == user.Id).ToListAsync();
+                return View(userRecords);
+            }
         }
 
+        [Authorize(Roles = "User")]
         [HttpPost]
         public async Task<IActionResult> ReturnBook(int borrowId)
         {
@@ -114,7 +125,7 @@ namespace LibraryManagementSystem.Controllers
             if (borrowRecord.ReturnDate > borrowRecord.DueDate)
             {
                 var daysLate = (borrowRecord.ReturnDate.Value - borrowRecord.DueDate).Days;
-                borrowRecord.FineAmount = daysLate * 10;
+                borrowRecord.FineAmount = daysLate * 50;
             }
 
             borrowRecord.Book.TotalCopies += 1;

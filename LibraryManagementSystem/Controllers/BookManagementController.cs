@@ -40,7 +40,7 @@ namespace LibraryManagementSystem.Controllers
 
             return View(books);
         }
-
+        [Authorize(Roles = "Admin,Librarian")]
         public IActionResult CreateBook()
         {
             ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName");
@@ -88,6 +88,7 @@ namespace LibraryManagementSystem.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin,Librarian")]
         public IActionResult EditBook(int id)
         {
             var book = _context.Books.Find(id);
@@ -115,6 +116,7 @@ namespace LibraryManagementSystem.Controllers
         }
 
         // AJAX-based delete method
+        [Authorize(Roles = "Admin,Librarian")]
         [HttpPost]
         public IActionResult DeleteBook(int id)
         {

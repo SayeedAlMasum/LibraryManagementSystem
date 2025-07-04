@@ -185,62 +185,70 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
-                        <li class="nav-item">
-                            <a href="/User/Index" class="nav-link">
-                                <i class="far fa-user nav-icon"></i>
-                                <p>User List</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-book"></i>
-                                <p>
-                                    Book Management
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/BookManagement/CreateBook" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Add</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/BookManagement/IndexBook" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>List</p>
-                                    </a>
-                                </li>
+                        @if(User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a href="/User/Index" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        User List
+                                    </p>
+                                </a>
+                            </li>
+                        }
+                         @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+                        {
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-book"></i>
+                                    <p>
+                                        Book Management
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="/BookManagement/CreateBook" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Add</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/BookManagement/IndexBook" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>List</p>
+                                        </a>
+                                    </li>
 
-                            </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-tags"></i>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="nav-icon fas fa-tags"></i>
 
-                                <p>
-                                    Category Management
+                                    <p>
+                                        Category Management
 
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="/Category/CreateCategory" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Add</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/Category/IndexCategory" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>List</p>
-                                    </a>
-                                </li>
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="/Category/CreateCategory" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Add</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="/Category/IndexCategory" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>List</p>
+                                        </a>
+                                    </li>
 
-                            </ul>
-                        </li>
+                                </ul>
+                            </li>
+                        }
 
                     </ul>
                 </nav>

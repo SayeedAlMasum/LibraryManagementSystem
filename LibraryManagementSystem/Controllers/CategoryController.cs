@@ -1,11 +1,13 @@
 ﻿//CategoryController.cs
-using Microsoft.AspNetCore.Mvc;
 using LibraryManagementSystem.Data;
 using LibraryManagementSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagementSystem.Controllers
 {
+    [Authorize(Roles = "Admin,Librarian")]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;

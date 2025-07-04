@@ -7,7 +7,10 @@
 <h2>Book List</h2>
 
 <p>
-    <a asp-controller="BookManagement" asp-action="CreateBook" class="btn btn-primary">Create New</a>
+    @if (User.IsInRole("Admin") || User.IsInRole("Librarian"))
+    {
+        <a asp-controller="BookManagement" asp-action="CreateBook" class="btn btn-primary">Create New Book</a>
+    }
 </p>
 
 <table id="myTable" class="table table-bordered">
