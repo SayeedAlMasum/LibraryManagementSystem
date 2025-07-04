@@ -127,6 +127,10 @@ namespace LibraryManagementSystem.Areas.Identity.Pages.Account
                     {
                         return LocalRedirect("/Home/Index");
                     }
+                    else if (roles.Contains("Librarian"))
+                    {
+                        return LocalRedirect("/Home/Index"); 
+                    }
 
                     // If no role matched, go to returnUrl
                     return LocalRedirect(returnUrl);
