@@ -47,9 +47,12 @@
                         @* @if (User.IsInRole("Admin"))
                         {
                             <a class="btn btn-info" asp-controller="Home" asp-action="Privacy">All_Users</a>
-                        } *@
+                        } *@                                    
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Borrow" asp-action="BorrowBookList">My_Borrowed_Books</a>
+                            </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-controller="Borrow" asp-action="BorrowBookList">My_Borrowed_Books</a>
+                            <a class="nav-link text-white" asp-controller="Borrow" asp-action="BorrowHistory">Borrow History</a>
                         </li>
                         <a asp-controller="BookManagement" asp-action="IndexBook" class="btn btn-primary">View Books</a>
 

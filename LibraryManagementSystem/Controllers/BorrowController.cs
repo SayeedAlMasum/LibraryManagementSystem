@@ -76,10 +76,58 @@ namespace LibraryManagementSystem.Controllers
 
             var borrowRecords = await _context.BorrowRecords
                 .Include(br => br.Book)
+                .Where(br => br.UserId == user.Id && br.ReturnDate == null) // ✅ Only show active borrows
+                .ToListAsync();
+
+            return View(borrowRecords);
+        }
+
+        // Show Full Borrow History
+        // GET: Borrow History Page
+        public async Task<IActionResult> BorrowHistory()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var borrowRecords = await _context.BorrowRecords
+                .Include(br => br.Book)
                 .Where(br => br.UserId == user.Id)
                 .ToListAsync();
 
             return View(borrowRecords);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ReturnBook(int borrowId)
+        {
+            var record = await _context.BorrowRecords
+                .Include(br => br.Book)
+                .FirstOrDefaultAsync(br => br.BorrowId == borrowId);
+
+            if (record == null || record.ReturnDate != null)
+            {
+                return Json(new { success = false, message = "Invalid record or already returned." });
+            }
+
+            record.ReturnDate = DateTime.Now;
+
+            if (record.ReturnDate > record.DueDate)
+            {
+                int lateDays = (record.ReturnDate.Value - record.DueDate).Days;
+                record.FineAmount = lateDays * 10;
+            }
+            else
+            {
+                record.FineAmount = 0;
+            }
+
+            record.Book.TotalCopies += 1;
+
+            _context.BorrowRecords.Update(record);
+            _context.Books.Update(record.Book);
+
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Book returned successfully." });
         }
 
     }

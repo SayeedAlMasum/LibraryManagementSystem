@@ -6,15 +6,6 @@
 }
 
 <h2>My Borrowed Books</h2>
-@* 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-}
-@if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
-} *@
 
 <table id="borrowedBooksTable" class="table table-bordered">
     <thead>
@@ -22,8 +13,7 @@
             <th>Book Title</th>
             <th>Borrow Date</th>
             <th>Due Date</th>
-            <th>Return Date</th>
-            <th>Fine Amount</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -33,8 +23,9 @@
                 <td>@item.Book.Title</td>
                 <td>@item.BorrowDate.ToShortDateString()</td>
                 <td>@item.DueDate.ToShortDateString()</td>
-                <td>@(item.ReturnDate.HasValue? item.ReturnDate.Value.ToShortDateString() : "Not Returned")</td>
-                <td>@item.FineAmount</td>
+                <td>
+                    <button class="btn btn-danger btn-return" data-id="@item.BorrowId">Return</button>
+                </td>
             </tr>
         }
     </tbody>
@@ -44,6 +35,43 @@
     <script>
         $(document).ready(function () {
             $('#borrowedBooksTable').DataTable();
+
+            $('.btn-return').click(function () {
+                var borrowId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "Do you want to return this book?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#28a745',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, return it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/Borrow/ReturnBook',
+                            type: 'POST',
+                            data: { borrowId: borrowId },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire('Returned!', response.message, 'success')
+                                        .then(() => {
+                                            location.reload(); // Refresh to see updated list
+                                        });
+                                } else {
+                                    Swal.fire('Error!', response.message, 'error');
+                                }
+                            },
+                            error: function () {
+                                Swal.fire('Error!', 'Something went wrong.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
         });
+
     </script>
 }
