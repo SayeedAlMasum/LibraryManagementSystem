@@ -2,7 +2,50 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-5">
+    <h1 class="display-4 font-weight-bold mb-4">Welcome to the Library Management System</h1>
+    <p class="lead mb-4">Your one-stop solution to manage, borrow, and track books efficiently.</p>
+    <a class="btn btn-primary btn-lg mr-2" asp-controller="BookManagement" asp-action="IndexBook">
+        <i class="fas fa-book-open"></i> View Books
+    </a>
+    <a class="btn btn-success btn-lg" asp-controller="Borrow" asp-action="BorrowBookList">
+        <i class="fas fa-book-reader"></i> My Borrowed Books
+    </a>
+</div>
+
+@* <div class="row mt-5">
+    <div class="col-md-4">
+        <div class="card card-primary card-outline shadow">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-book fa-lg text-primary"></i> Manage Books</h5>
+                <p class="card-text mt-2">Add, edit, delete, and view all books in the library.</p>
+                <a asp-controller="BookManagement" asp-action="IndexBook" class="btn btn-primary btn-block">Manage Books</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-success card-outline shadow">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-history fa-lg text-success"></i> Borrow History</h5>
+                <p class="card-text mt-2">Track all your past and current borrow activities.</p>
+                <a asp-controller="Borrow" asp-action="BorrowHistory" class="btn btn-success btn-block">View History</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-warning card-outline shadow">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-users fa-lg text-warning"></i> User Dashboard</h5>
+                <p class="card-text mt-2">Manage your profile and see your borrowed books quickly.</p>
+                <a asp-controller="Borrow" asp-action="BorrowBookList" class="btn btn-warning btn-block">Go to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div> *@
+
+<div class="mt-5 text-center">
+    <h4>Thank you for using our system!</h4>
+    <p class="text-muted">Happy reading and learning <i class="fa-solid fa-smile"></i></p>
 </div>
