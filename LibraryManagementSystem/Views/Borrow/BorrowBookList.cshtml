@@ -14,6 +14,7 @@
             <th>Borrow Date</th>
             <th>Due Date</th>
             <th>Action</th>
+            <th>Fine Amount</th>
         </tr>
     </thead>
     <tbody>
@@ -24,8 +25,18 @@
                 <td>@item.BorrowDate.ToShortDateString()</td>
                 <td>@item.DueDate.ToShortDateString()</td>
                 <td>
-                    <button class="btn btn-danger btn-return" data-id="@item.BorrowId">Return</button>
+                    @if (item.ReturnDate == null)
+                    {
+                        <button class="btn btn-danger btn-return" data-id="@item.BorrowId">Return</button>
+                    }
+                    else
+                    {
+                        <span>Returned</span>
+                    }
                 </td>
+                <td>@item.FineAmount ৳</td>
+
+
             </tr>
         }
     </tbody>
@@ -56,22 +67,35 @@
                             data: { borrowId: borrowId },
                             success: function (response) {
                                 if (response.success) {
-                                    Swal.fire('Returned!', response.message, 'success')
-                                        .then(() => {
-                                            location.reload(); // Refresh to see updated list
-                                        });
+                                    Swal.fire(
+                                        'Returned!',
+                                        response.message,
+                                        'success'
+                                    ).then(() => {
+                                        location.reload(); // Refresh the list
+                                    });
                                 } else {
-                                    Swal.fire('Error!', response.message, 'error');
+                                    Swal.fire(
+                                        'Error!',
+                                        response.message,
+                                        'error'
+                                    );
                                 }
                             },
                             error: function () {
-                                Swal.fire('Error!', 'Something went wrong.', 'error');
+                                Swal.fire(
+                                    'Error!',
+                                    'Something went wrong.',
+                                    'error'
+                                );
                             }
                         });
                     }
                 });
             });
         });
+    </script>
+
 
     </script>
 }

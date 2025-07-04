@@ -99,36 +99,34 @@ namespace LibraryManagementSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> ReturnBook(int borrowId)
         {
-            var record = await _context.BorrowRecords
+            var borrowRecord = await _context.BorrowRecords
                 .Include(br => br.Book)
                 .FirstOrDefaultAsync(br => br.BorrowId == borrowId);
 
-            if (record == null || record.ReturnDate != null)
+            if (borrowRecord == null || borrowRecord.ReturnDate != null)
             {
-                return Json(new { success = false, message = "Invalid record or already returned." });
+                return Json(new { success = false, message = "Borrow record not found or already returned." });
             }
 
-            record.ReturnDate = DateTime.Now;
+            borrowRecord.ReturnDate = DateTime.Now;
 
-            if (record.ReturnDate > record.DueDate)
+            // Fine Calculation: 10৳ per day if late
+            if (borrowRecord.ReturnDate > borrowRecord.DueDate)
             {
-                int lateDays = (record.ReturnDate.Value - record.DueDate).Days;
-                record.FineAmount = lateDays * 10;
-            }
-            else
-            {
-                record.FineAmount = 0;
+                var daysLate = (borrowRecord.ReturnDate.Value - borrowRecord.DueDate).Days;
+                borrowRecord.FineAmount = daysLate * 10;
             }
 
-            record.Book.TotalCopies += 1;
+            borrowRecord.Book.TotalCopies += 1;
 
-            _context.BorrowRecords.Update(record);
-            _context.Books.Update(record.Book);
+            _context.BorrowRecords.Update(borrowRecord);
+            _context.Books.Update(borrowRecord.Book);
 
             await _context.SaveChangesAsync();
 
             return Json(new { success = true, message = "Book returned successfully." });
         }
+
 
     }
 }
