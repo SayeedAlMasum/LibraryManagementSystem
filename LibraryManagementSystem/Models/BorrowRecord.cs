@@ -18,5 +18,6 @@ namespace LibraryManagementSystem.Models
         public DateTime? ReturnDate { get; set; }
 
         public int FineAmount { get; set; } 
+        public string Status { get; set; } = "Pending";
     }
 }

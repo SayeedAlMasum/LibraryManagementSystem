@@ -42,6 +42,9 @@
                                 <a asp-controller="Home" asp-action="Privacy" class="nav-link">Admin</a>
                             </li>
                         }
+                        <li class="nav-item">
+                            <a asp-controller="BookManagement" asp-action="IndexBook" class="nav-link">View Books</a>
+                        </li>
                         @if (User.IsInRole("User"))
                         {
                             <li class="nav-item">
@@ -51,9 +54,7 @@
                         <li class="nav-item">
                             <a asp-controller="Borrow" asp-action="BorrowHistory" class="nav-link">Borrow History</a>
                         </li>
-                        <li class="nav-item">
-                            <a asp-controller="BookManagement" asp-action="IndexBook" class="nav-link">View Books</a>
-                        </li>
+                      
                     </ul>
 
                     <form class="form-inline ml-3">

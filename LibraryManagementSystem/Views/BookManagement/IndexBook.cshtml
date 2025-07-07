@@ -119,44 +119,54 @@
             });
 
             // Borrow book with SweetAlert and AJAX
-            $('.btn-borrow').click(function () {
-                var bookId = $(this).data('id');
+        $('.btn-borrow').click(function () {
+            var bookId = $(this).data('id');
 
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "Do you want to borrow this book?",
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonColor: '#28a745',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, Borrow it!',
-                    cancelButtonText: 'Cancel'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            url: '/Borrow/ConfirmBorrow',
-                            type: 'POST',
-                            data: { bookId: bookId },
-                            success: function (response) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "Do you want to request this book for borrowing?",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, Request it!',
+                cancelButtonText: 'Cancel'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Borrow/ConfirmBorrow',
+                        type: 'POST',
+                        data: { bookId: bookId },
+                        success: function (response) {
+                            if (response.success) {
                                 Swal.fire(
-                                    'Success!',
-                                    'Book borrowed successfully.',
+                                    'Request Sent!',
+                                    'Your borrow request has been submitted. Please wait for admin approval.',
                                     'success'
                                 ).then(() => {
-                                    location.reload(); // Refresh the page to update copies
+                                    location.reload(); // Refresh the page to reflect the request
                                 });
-                            },
-                            error: function () {
+                            } else {
                                 Swal.fire(
                                     'Error!',
-                                    'An error occurred while borrowing the book.',
+                                    response.message,
                                     'error'
                                 );
                             }
-                        });
-                    }
-                });
+                        },
+                        error: function () {
+                            Swal.fire(
+                                'Error!',
+                                'An error occurred while submitting your request.',
+                                'error'
+                            );
+                        }
+                    });
+                }
             });
+        });
+
+
 
             // Initialize DataTable
             $('#myTable').DataTable();

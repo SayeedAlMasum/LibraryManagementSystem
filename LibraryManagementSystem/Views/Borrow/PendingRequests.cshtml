@@ -1,0 +1,83 @@
+﻿@* PendingRequests.cshtml *@
+@model IEnumerable<LibraryManagementSystem.Models.BorrowRecord>
+
+@{
+    ViewData["Title"] = "Pending Borrow Requests";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table id="pendingRequests" class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Book Title</th>
+            <th>User</th>
+            <th>Borrow Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Book.Title</td>
+                <td>@item.User.UserName</td>
+                <td>@item.BorrowDate.ToShortDateString()</td>
+                <td>
+                    <button class="btn btn-success btn-approve" data-id="@item.BorrowId">Approve</button>
+                    <button class="btn btn-danger btn-reject" data-id="@item.BorrowId">Reject</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#pendingRequests').DataTable();
+
+            $('.btn-approve').click(function () {
+                var borrowId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Approve Request?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Approve'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('/Borrow/ApproveRequest', { borrowId: borrowId }, function (response) {
+                            if (response.success) {
+                                Swal.fire('Approved!', response.message, 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire('Error!', response.message, 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('.btn-reject').click(function () {
+                var borrowId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Reject Request?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, Reject'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('/Borrow/RejectRequest', { borrowId: borrowId }, function (response) {
+                            if (response.success) {
+                                Swal.fire('Rejected!', response.message, 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire('Error!', response.message, 'error');
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

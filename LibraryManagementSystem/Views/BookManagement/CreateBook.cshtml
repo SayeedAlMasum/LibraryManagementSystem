@@ -1,4 +1,5 @@
 ﻿@* CreateBook.cshtml *@
+@* CreateBook.cshtml *@
 @model LibraryManagementSystem.ViewModels.BookCreateViewModel
 
 @{
@@ -51,7 +52,12 @@
 
                                 <div class="form-group">
                                     <label asp-for="ISBN">ISBN</label>
-                                    <input asp-for="ISBN" class="form-control" placeholder="Enter ISBN number" />
+                                    <div class="input-group">
+                                        <input asp-for="ISBN" id="isbnInput" class="form-control" placeholder="Enter ISBN number" />
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-secondary" id="generateISBN">Auto Generate</button>
+                                        </div>
+                                    </div>
                                     <span asp-validation-for="ISBN" class="text-danger"></span>
                                 </div>
 
@@ -87,7 +93,6 @@
                                     <span asp-validation-for="CoverImage" class="text-danger"></span>
                                 </div>
 
-
                                 <div class="form-group">
                                     <label asp-for="TotalCopies">Total Copies</label>
                                     <input asp-for="TotalCopies" class="form-control" type="number" min="1" placeholder="Enter total copies" />
@@ -117,5 +122,18 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-}
+    <script>
+        $(document).ready(function () {
 
+            // Auto-generate ISBN when button is clicked
+            $('#generateISBN').click(function () {
+                var prefix = '978'; // Common ISBN prefix
+                var randomDigits = Math.floor(1000000000 + Math.random() * 9000000000); // Generate 10-digit random number
+                var generatedISBN = prefix + randomDigits;
+
+                $('#isbnInput').val(generatedISBN); // Set generated ISBN to input field
+            });
+
+        });
+    </script>
+}
